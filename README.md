@@ -1,0 +1,1 @@
+Simple application for money transferring between accounts.
