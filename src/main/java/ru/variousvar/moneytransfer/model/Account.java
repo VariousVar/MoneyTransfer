@@ -10,6 +10,6 @@ import lombok.Setter;
 public class Account {
     private Long id;
     private String name;
-    private long amount; // todo use BigDecimal
+    private long balance; // todo use BigDecimal
 
 }

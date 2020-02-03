@@ -52,6 +52,6 @@ public class DatabaseAccountDao implements AccountDao {
     }
 
     private Connection getConnection() throws SQLException {
-        return DBConnectionFactory.getConnection();
+        return H2DbDao.getConnection();
     }
 }
