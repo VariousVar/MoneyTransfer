@@ -16,8 +16,17 @@ public class H2DbDao {
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "sa";
 
-    private static final String createAccountsTableQuery = "CREATE TABLE account (id BIGINT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), balance BIGINT NOT NULL) ";
-    private static final String createTransactionsTableQuery = "CREATE TABLE transaction (id BIGINT AUTO_INCREMENT PRIMARY KEY, fromAccount BIGINT, toAccount BIGINT NOT NULL, amount BIGINT NOT NULL, description VARCHAR(100), created TIMESTAMP  NOT NULL)";
+    private static final String createAccountsTableQuery = "CREATE TABLE account " +
+            "(id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+            "name VARCHAR(100), " +
+            "balance BIGINT NOT NULL) ";
+    private static final String createTransactionsTableQuery = "CREATE TABLE transaction " +
+            "(id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+            "fromAccount BIGINT, " +
+            "toAccount BIGINT NOT NULL, " +
+            "amount BIGINT NOT NULL, " +
+            "description VARCHAR(100), " +
+            "created TIMESTAMP  NOT NULL)";
 
 
     public static Connection getConnection() throws SQLException {

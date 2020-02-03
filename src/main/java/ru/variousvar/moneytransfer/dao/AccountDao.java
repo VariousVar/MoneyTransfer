@@ -30,13 +30,13 @@ public interface AccountDao {
      * @param newAccount account to be created
      * @throws Exception if account already exist or any error occurred
      */
-    void create(Account newAccount) throws Exception;
+    Long create(Account newAccount) throws Exception;
 
     /**
      * Updates account properties (except for balance and id).
      *
      * @param account account that contain new values for properties
-     * @throws Exception if account doesn't exist or any exception occurred
+     * @throws Exception if account doesn't exist, account id didn't provided or any exception occurred
      */
     void update(Account account) throws Exception;
 
