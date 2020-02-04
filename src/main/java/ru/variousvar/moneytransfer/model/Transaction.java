@@ -1,17 +1,17 @@
 package ru.variousvar.moneytransfer.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
 
-@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class Transaction {
     private Long id;
-    private Account fromAccount;
+    private Account fromAccount; // fixme actually, need only id and name, current balance is irrelevant within transaction
     private Account toAccount;
     private long amount; // todo use BigDecimal
     private String description;

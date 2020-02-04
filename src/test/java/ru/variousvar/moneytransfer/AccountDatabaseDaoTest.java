@@ -10,8 +10,10 @@ import ru.variousvar.moneytransfer.dao.db.DatabaseAccountDao;
 import ru.variousvar.moneytransfer.dao.db.DatabaseTransactionDao;
 import ru.variousvar.moneytransfer.dao.db.H2DbDao;
 import ru.variousvar.moneytransfer.model.Account;
+import ru.variousvar.moneytransfer.model.Transaction;
 
 import java.util.Collection;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -32,15 +34,17 @@ public class AccountDatabaseDaoTest {
 
     @Test
     public void createAccount_validParameters_created() throws Exception {
+        // arrange
         Account account = new Account();
         account.setName("Test1");
         account.setBalance(100);
 
+        // act
         Long accountId = accountDao.create(account);
-
         Collection<Account> allAccounts = accountDao.getAll();
         Account dbAccount = accountDao.get(accountId);
 
+        // assert
         assertThat(allAccounts, hasSize(1));
         assertThat(account.getName(), equalTo(dbAccount.getName()));
         assertThat(account.getBalance(), equalTo(dbAccount.getBalance()));
@@ -49,7 +53,20 @@ public class AccountDatabaseDaoTest {
 
     @Test
     public void createAccount_validParameters_shouldExistInitialTransaction() throws Exception {
+        // arrange
+        Account account = new Account();
+        account.setName("Test1");
+        account.setBalance(100);
 
+        // act
+        Long accountId = accountDao.create(account);
+        List<Transaction> accountTransactions = transactionDao.getAllByAccount(accountId);
+
+        // assert
+        assertThat(accountTransactions, hasSize(1));
+        Transaction accountInitialTransaction = accountTransactions.get(0);
+        assertThat(accountInitialTransaction.getAmount(), equalTo(account.getBalance()));
+        assertThat(accountInitialTransaction.getToAccount().getId(), equalTo(accountId)); // todo [COUPLING]
     }
 
     @Test

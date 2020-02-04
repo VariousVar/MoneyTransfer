@@ -46,7 +46,7 @@ public interface AccountDao {
      * @param id identifier of account to be deleted
      * @throws Exception if account doesn't exist or any exception occurred
      */
-    void delete(Long id) throws Exception;
+    void delete(Long id) throws Exception; // todo might be unsafe, cause of transaction chain breaking
 
 
 }

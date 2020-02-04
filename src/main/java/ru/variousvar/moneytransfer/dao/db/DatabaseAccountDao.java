@@ -20,7 +20,6 @@ public class DatabaseAccountDao implements AccountDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseAccountDao.class);
 
     private final String getAccountQuery = "SELECT * FROM account WHERE id = ?";
-    private final String getAllAccountsQuery = "SELECT * FROM account";
 
     private final String lockAccountForUpdateQuery = getAccountQuery + " FOR UPDATE";
 
@@ -39,7 +38,8 @@ public class DatabaseAccountDao implements AccountDao {
 
         try {
             connection = getConnection();
-            statement = connection.prepareStatement(getAllAccountsQuery);
+            statement = connection.prepareStatement(getAccountQuery);
+            statement.setLong(1, id);
             Account account = null;
 
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -73,7 +73,8 @@ public class DatabaseAccountDao implements AccountDao {
 
         try {
             connection = getConnection();
-            statement = connection.prepareStatement(getAllAccountsQuery);
+            // todo do I need this one row simple queries?
+            statement = connection.prepareStatement("SELECT * FROM account");
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
