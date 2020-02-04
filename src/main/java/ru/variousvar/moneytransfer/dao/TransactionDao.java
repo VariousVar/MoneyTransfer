@@ -16,7 +16,7 @@ public interface TransactionDao {
     Transaction get(Long id) throws Exception;
 
     /**
-     * Loads all registered transactions by all accounts.
+     * Loads all registered transactions by all accounts. Sorted by creation date descending.
      *
      * @return loaded transaction or empty list if none registered
      * @throws Exception if any exception occurred
@@ -25,7 +25,7 @@ public interface TransactionDao {
 
     /**
      * Loads all transactions, registered by account with {@param accountId} identifier, either of account being in
-     * from or to part of transaction.
+     * from or to part of transaction. Sorted by creation date descending.
      *
      * @param accountId account identifier to select transactions
      * @return loaded transaction registered of specified account
@@ -37,8 +37,9 @@ public interface TransactionDao {
      * Runs transaction between accounts.
      *
      * @param transaction transaction to be executed
+     * @return executed transaction identifier
      * @throws Exception if withdrawn account has not enough money, any of accounts doesn't exist or any exception occurred
      */
-    void executeTransaction(Transaction transaction) throws Exception;
+    Long executeTransaction(Transaction transaction) throws Exception;
 
 }

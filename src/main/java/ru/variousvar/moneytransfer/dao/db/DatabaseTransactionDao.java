@@ -100,8 +100,8 @@ public class DatabaseTransactionDao implements TransactionDao {
     }
 
     @Override
-    public void executeTransaction(Transaction transaction) throws Exception {
-
+    public Long executeTransaction(Transaction transaction) throws Exception {
+        return 1L;
     }
 
     private Connection getConnection() throws SQLException {
