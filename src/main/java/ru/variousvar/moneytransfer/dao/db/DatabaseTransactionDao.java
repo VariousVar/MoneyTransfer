@@ -28,7 +28,7 @@ public class DatabaseTransactionDao implements TransactionDao {
             "SELECT t.id, t.fromAccount, t.toAccount, t.amount, t.created, t.description " +
             "FROM `transaction` t " +
             "LEFT JOIN account aFrom ON aFrom.id = t.fromAccount " +
-            "INNER JOIN account aTo ON aTo.id = t.toAccount " +
+            "LEFT JOIN account aTo ON aTo.id = t.toAccount " +
             "WHERE (t.fromAccount = ? OR t.toAccount = ?) " +
             "ORDER BY t.created DESC";
 
@@ -71,8 +71,12 @@ public class DatabaseTransactionDao implements TransactionDao {
                         transaction.setFromAccount(fromAccount);
                     }
 
-                    toAccount.setId(rs.getLong("toAccount"));
-                    transaction.setToAccount(toAccount);
+                    long toAccountId = rs.getLong("toAccount");
+                    if (!rs.wasNull()) {
+                        toAccount.setId(toAccountId);
+                        transaction.setToAccount(toAccount);
+                    }
+
 
                     transactions.add(transaction);
                 }
