@@ -147,6 +147,7 @@ public class AccountDatabaseDaoTest {
         // arrange
 
         // act & assert
+        // todo too simple, need some way to validate message or specific type of exception
         Assertions.assertThrows(Exception.class, () -> accountDao.delete(1L));
     }
 
