@@ -106,6 +106,10 @@ public class DatabaseAccountDao implements AccountDao {
         PreparedStatement accountCreationStatement = null;
         PreparedStatement initialTransactionStatement = null;
 
+        if (newAccount.getBalance() < 0) {
+            throw new Exception("Account balance couldn't be less than zero");
+        }
+
         try {
             connection = getConnection();
 
@@ -159,7 +163,7 @@ public class DatabaseAccountDao implements AccountDao {
             }
 
             throw new Exception(
-                    String.format("Unable to create user account with name={}, and balance={}, sql exception occurred: {}",
+                    String.format("Unable to create user account with name=%s, and balance=%s, sql exception occurred: %s",
                     newAccount.getName(), newAccount.getBalance(), ex.getMessage()), ex);
         } finally {
             DbUtils.closeQuietly(accountCreationStatement);
@@ -171,12 +175,81 @@ public class DatabaseAccountDao implements AccountDao {
 
     @Override
     public void update(Account account) throws Exception {
+        Connection connection = null;
+        PreparedStatement statement = null;
 
+        try {
+            connection = getConnection();
+            connection.setAutoCommit(false);
+
+            statement = connection.prepareStatement(updateAccountInformation);
+            statement.setString(1, account.getName());
+            statement.setLong(2, account.getId());
+
+            int i = statement.executeUpdate();
+            if (i == 0) {
+                throw new Exception("Unable to update account, account with id=" + account.getId() + " doesn't exist");
+            }
+
+            connection.commit();
+
+        } catch (SQLException ex) {
+            LOGGER.error("Account update failed, exception occurred: {}", ex.getMessage(), ex);
+            try {
+                if (connection != null) {
+                    connection.rollback();
+                }
+            } catch (SQLException rollingBackEx) {
+                LOGGER.error("SQL Exception occurred while rolling back account update: {}",
+                        rollingBackEx.getMessage(), rollingBackEx);
+            }
+
+            throw new Exception(
+                    String.format("Unable to update user account with name=%s, sql exception occurred: %s",
+                            account.getName(), ex.getMessage()), ex);
+        } finally {
+            DbUtils.closeQuietly(statement);
+            DbUtils.closeQuietly(connection);
+        }
     }
 
     @Override
     public void delete(Long id) throws Exception {
+        Connection connection = null;
+        PreparedStatement statement = null;
 
+        try {
+            connection = getConnection();
+            connection.setAutoCommit(false);
+
+            statement = connection.prepareStatement(deleteAccountQuery);
+            statement.setLong(1, id);
+
+            int i = statement.executeUpdate();
+            if (i == 0) {
+                throw new Exception("Unable to delete account, account with id=" + id + " doesn't exist");
+            }
+
+            connection.commit();
+
+        } catch (SQLException ex) {
+            LOGGER.error("Account deletion failed, exception occurred: {}", ex.getMessage(), ex);
+            try {
+                if (connection != null) {
+                    connection.rollback();
+                }
+            } catch (SQLException rollingBackEx) {
+                LOGGER.error("SQL Exception occurred while rolling back account deletion: {}",
+                        rollingBackEx.getMessage(), rollingBackEx);
+            }
+
+            throw new Exception(
+                    String.format("Unable to delete user account with i=%s, sql exception occurred: %s",
+                            id, ex.getMessage()), ex);
+        } finally {
+            DbUtils.closeQuietly(statement);
+            DbUtils.closeQuietly(connection);
+        }
     }
 
     private Connection getConnection() throws SQLException {

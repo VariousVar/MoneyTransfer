@@ -16,11 +16,13 @@ public class H2DbDao {
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "sa";
 
-    private static final String createAccountsTableQuery = "CREATE TABLE account " +
+    private static final String createAccountsTableQuery = "DROP TABLE IF EXISTS account; " +
+            "CREATE TABLE account " +
             "(id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
             "name VARCHAR(100), " +
             "balance BIGINT NOT NULL) ";
-    private static final String createTransactionsTableQuery = "CREATE TABLE transaction " +
+    private static final String createTransactionsTableQuery = "DROP TABLE IF EXISTS transaction; " +
+            "CREATE TABLE transaction " +
             "(id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
             "fromAccount BIGINT, " +
             "toAccount BIGINT NOT NULL, " +
