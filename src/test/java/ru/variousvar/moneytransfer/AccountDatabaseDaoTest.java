@@ -25,10 +25,10 @@ public class AccountDatabaseDaoTest {
 
     @BeforeEach
     public void beforeTest() throws Exception {
-        H2DbDao.initialiseDatabase(); // todo [IMPORTANT] using real db for fast prototype
+        H2DbDao.initialiseTestDatabase();
 
-        accountDao = new DatabaseAccountDao();
-        transactionDao = new DatabaseTransactionDao();
+        accountDao = new DatabaseAccountDao(H2DbDao::getConnectionForTest);
+        transactionDao = new DatabaseTransactionDao(H2DbDao::getConnectionForTest);
     }
 
     @Test

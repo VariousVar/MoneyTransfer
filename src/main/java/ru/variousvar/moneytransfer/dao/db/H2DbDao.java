@@ -52,7 +52,7 @@ public class H2DbDao {
         PreparedStatement createTablesStatement = null;
 
         try {
-            connection = getConnection();
+            connection = DriverManager.getConnection(dbUrl, DB_USER, DB_PASSWORD);
             connection.setAutoCommit(false);
             createTablesStatement = connection.prepareStatement(createAccountsTableQuery + "; \n " + createTransactionsTableQuery);
 

@@ -31,6 +31,12 @@ public class DatabaseAccountDao implements AccountDao {
     private final String updateAccountInformation = "UPDATE account SET name = ? WHERE id = ?";
     private final String deleteAccountQuery = "DELETE FROM account WHERE id = ?";
 
+    private final ConnectionFactory connectionFactory;
+
+    public DatabaseAccountDao(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
     @Override
     public Account get(Long id) throws Exception {
         Connection connection = null;
@@ -253,6 +259,6 @@ public class DatabaseAccountDao implements AccountDao {
     }
 
     private Connection getConnection() throws SQLException {
-        return H2DbDao.getConnection();
+        return connectionFactory.getConnection();
     }
 }

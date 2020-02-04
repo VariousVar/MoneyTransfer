@@ -32,6 +32,12 @@ public class DatabaseTransactionDao implements TransactionDao {
             "WHERE (t.fromAccount = ? OR t.toAccount = ?) " +
             "ORDER BY t.created DESC";
 
+    private final ConnectionFactory connectionFactory;
+
+    public DatabaseTransactionDao(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
     @Override
     public Transaction get(Long id) throws Exception {
         return null;
@@ -99,6 +105,6 @@ public class DatabaseTransactionDao implements TransactionDao {
     }
 
     private Connection getConnection() throws SQLException {
-        return H2DbDao.getConnection();
+        return connectionFactory.getConnection();
     }
 }
