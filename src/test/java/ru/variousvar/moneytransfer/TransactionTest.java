@@ -1,7 +1,5 @@
 package ru.variousvar.moneytransfer;
 
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +13,6 @@ import ru.variousvar.moneytransfer.model.Transaction;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
-
 
 public class TransactionTest {
 
@@ -50,7 +47,7 @@ public class TransactionTest {
         Transaction transaction = new Transaction();
         transaction.setFromAccount(first);
         transaction.setToAccount(second);
-        long transferAmount = 50;
+        long transferAmount = first.getBalance() / 2;
         transaction.setAmount(transferAmount);
         transaction.setDescription("Transfer");
 
@@ -80,7 +77,7 @@ public class TransactionTest {
         Transaction transaction = new Transaction();
         transaction.setFromAccount(first);
         transaction.setToAccount(second);
-        long transferAmount = 1000;
+        long transferAmount = first.getBalance() * 10;
         transaction.setAmount(transferAmount);
         transaction.setDescription("Transfer");
 
