@@ -92,11 +92,6 @@ public class DatabaseTransactionDao implements TransactionDao {
     }
 
     @Override
-    public List<Transaction> getAll() throws Exception {
-        return Collections.emptyList();
-    }
-
-    @Override
     public List<Transaction> getAllByAccount(Long accountId) throws Exception {
         Connection connection = null;
         PreparedStatement statement = null;

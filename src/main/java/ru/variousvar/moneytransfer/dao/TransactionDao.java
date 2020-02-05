@@ -15,13 +15,6 @@ public interface TransactionDao {
      */
     Transaction get(Long id) throws Exception;
 
-    /**
-     * Loads all registered transactions by all accounts. Sorted by creation date descending.
-     *
-     * @return loaded transaction or empty list if none registered
-     * @throws Exception if any exception occurred
-     */
-    List<Transaction> getAll() throws Exception;
 
     /**
      * Loads all transactions, registered by account with {@param accountId} identifier, either of account being in
