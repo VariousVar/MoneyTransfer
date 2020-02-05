@@ -186,6 +186,7 @@ public class DatabaseTransactionDao implements TransactionDao {
                 }
             }
 
+            // todo it's better to add info in log about amounts and ids, but I guess it's restricted
             if (toAccountBalance == null) {
                 throw new Exception("Receiver account doesn't exist");
             }
@@ -229,7 +230,7 @@ public class DatabaseTransactionDao implements TransactionDao {
                     registeredTransactionId = (generatedKeys.getLong(1));
                 }
                 else {
-                    throw new SQLException("Account creation failed, no id obtained.");
+                    throw new SQLException("Transaction creation failed, no id obtained.");
                 }
             }
 
