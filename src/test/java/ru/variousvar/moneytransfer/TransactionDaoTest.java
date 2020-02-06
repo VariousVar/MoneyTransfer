@@ -14,7 +14,7 @@ import ru.variousvar.moneytransfer.model.Transaction;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
-public class TransactionTest {
+public class TransactionDaoTest {
 
     private AccountDao accountDao;
     private TransactionDao transactionDao;
@@ -146,6 +146,6 @@ public class TransactionTest {
 
     @Test
     public void getByAccount_multipleTransactionRegistered_onlyAccountTransactions() throws Exception {
-
+        // todo need impl
     }
 }

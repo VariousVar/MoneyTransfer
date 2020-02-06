@@ -16,8 +16,8 @@ public class H2DbDao {
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "sa";
 
-    // todo don't understand how it works - it should break multiple connections but they live and execute
-    // todo but tests works
+    // todo don't understand how 'SET EXCLUSIVE' works - it should break multiple connections but they live and execute
+    // todo and tests work. Without 'SET EXCLUSIVE' H2 rejects to create more than one connection.
     private static final String createAccountsTableQuery = "SET EXCLUSIVE 2;" +
             "DROP TABLE IF EXISTS account; " +
             "CREATE TABLE account " +
