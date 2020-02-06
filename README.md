@@ -4,8 +4,8 @@ Simple application for money transferring between accounts. Server works on port
 
 | METHOD | PATH                      |           BODY          | Response                | Description                                     |
 |--------|---------------------------|:-----------------------:|-------------------------|-------------------------------------------------|
-| GET    | /account/                 |            x            | AccountModel            | Get all registered accounts                     |
-| GET    | /account/{id}             |            x            | Array of AccountModel     | Get one account by id                           |
+| GET    | /account/                 |            x            | Array of AccountModel            | Get all registered accounts                     |
+| GET    | /account/{id}             |            x            | AccountModel     | Get one account by id                           |
 | POST   | /account/                 |    CreateAccountModel   | AccountModel            | Create new account                              |
 | PATCH  | /account/{id}             |    ChangeAccountModel   | AccountModel            | Change account                                  |
 | DELETE | /account/{id}             |            x            |                         | Delete account                                  |
