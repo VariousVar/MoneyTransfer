@@ -1,4 +1,4 @@
-Simple application for money transferring between accounts.
+Simple application for money transferring between accounts. Server works on port 8080.
 
 ### API:
 
