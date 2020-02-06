@@ -19,17 +19,10 @@ public class DatabaseAccountDao implements AccountDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseAccountDao.class);
 
-    private final String getAccountQuery = "SELECT * FROM account WHERE id = ?";
-
-    private final String lockAccountForUpdateQuery = getAccountQuery + " FOR UPDATE";
-
-    private final String createAccountQuery = "INSERT INTO account (name, balance) VALUES (?, ?)";
     private final String initialBalanceTransactionQuery =
             "INSERT INTO transaction " +
             "(fromAccount, toAccount, amount, description, created) " +
             "VALUES (?, ?, ?, ?, ?)";
-    private final String updateAccountInformation = "UPDATE account SET name = ? WHERE id = ?";
-    private final String deleteAccountQuery = "DELETE FROM account WHERE id = ?";
 
     private final ConnectionFactory connectionFactory;
 
@@ -44,7 +37,7 @@ public class DatabaseAccountDao implements AccountDao {
 
         try {
             connection = getConnection();
-            statement = connection.prepareStatement(getAccountQuery);
+            statement = connection.prepareStatement("SELECT * FROM account WHERE id = ?");
             statement.setLong(1, id);
             Account account = null;
 
@@ -79,7 +72,6 @@ public class DatabaseAccountDao implements AccountDao {
 
         try {
             connection = getConnection();
-            // todo do I need this one row simple queries?
             statement = connection.prepareStatement("SELECT * FROM account");
 
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -120,7 +112,7 @@ public class DatabaseAccountDao implements AccountDao {
             connection = getConnection();
 
             // create account and receive it's id
-            accountCreationStatement = connection.prepareStatement(createAccountQuery, Statement.RETURN_GENERATED_KEYS);
+            accountCreationStatement = connection.prepareStatement("INSERT INTO account (name, balance) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
 
             accountCreationStatement.setString(1, newAccount.getName());
             accountCreationStatement.setLong(2, newAccount.getBalance());
@@ -188,7 +180,7 @@ public class DatabaseAccountDao implements AccountDao {
             connection = getConnection();
             connection.setAutoCommit(false);
 
-            statement = connection.prepareStatement(updateAccountInformation);
+            statement = connection.prepareStatement("UPDATE account SET name = ? WHERE id = ?");
             statement.setString(1, account.getName());
             statement.setLong(2, account.getId());
 
@@ -228,7 +220,7 @@ public class DatabaseAccountDao implements AccountDao {
             connection = getConnection();
             connection.setAutoCommit(false);
 
-            statement = connection.prepareStatement(deleteAccountQuery);
+            statement = connection.prepareStatement("DELETE FROM account WHERE id = ?");
             statement.setLong(1, id);
 
             int i = statement.executeUpdate();
