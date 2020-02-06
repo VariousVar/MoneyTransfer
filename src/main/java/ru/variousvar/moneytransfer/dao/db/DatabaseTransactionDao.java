@@ -10,7 +10,6 @@ import ru.variousvar.moneytransfer.model.Transaction;
 import java.sql.*;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,7 +26,6 @@ public class DatabaseTransactionDao implements TransactionDao {
             "LEFT JOIN account aTo ON aTo.id = t.toAccount " +
             "WHERE t.id = ?";
 
-    // todo probably it's unnecessary to read account, because user already selected it
     // fixme left join... may create empty fromAccount, but fromAccount maybe null if we don't have service account to initiate balance
     private final String selectTransactionsWithAccountsQuery = "" +
             "SELECT t.id, t.fromAccount, t.toAccount, t.amount, t.created, t.description " +
@@ -58,23 +56,19 @@ public class DatabaseTransactionDao implements TransactionDao {
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
                     transaction = new Transaction();
-                    Account fromAccount = new Account();
-                    Account toAccount = new Account();
 
                     transaction.setId(rs.getLong("id"));
                     transaction.setAmount(rs.getLong("amount"));
                     transaction.setDescription(rs.getString("description"));
 
-                    long fromAccountId = rs.getLong("fromAccount");
+                    long senderId = rs.getLong("fromAccount");
                     if (!rs.wasNull()) {
-                        fromAccount.setId(fromAccountId);
-                        transaction.setFromAccount(fromAccount);
+                        transaction.setSender(senderId);
                     }
 
-                    long toAccountId = rs.getLong("toAccount");
+                    long receiverId = rs.getLong("toAccount");
                     if (!rs.wasNull()) {
-                        toAccount.setId(toAccountId);
-                        transaction.setToAccount(toAccount);
+                        transaction.setReceiver(receiverId);
                     }
                 } else {
                     throw new Exception("Transaction with specified id="+ id + " doesn't exist");
@@ -107,23 +101,18 @@ public class DatabaseTransactionDao implements TransactionDao {
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
                     Transaction transaction = new Transaction();
-                    Account fromAccount = new Account();
-                    Account toAccount = new Account();
-
                     transaction.setId(rs.getLong("id"));
                     transaction.setAmount(rs.getLong("amount"));
                     transaction.setDescription(rs.getString("description"));
 
-                    long fromAccountId = rs.getLong("fromAccount");
+                    long senderId = rs.getLong("fromAccount");
                     if (!rs.wasNull()) {
-                        fromAccount.setId(fromAccountId);
-                        transaction.setFromAccount(fromAccount);
+                        transaction.setSender(senderId);
                     }
 
-                    long toAccountId = rs.getLong("toAccount");
+                    long receiverId = rs.getLong("toAccount");
                     if (!rs.wasNull()) {
-                        toAccount.setId(toAccountId);
-                        transaction.setToAccount(toAccount);
+                        transaction.setReceiver(receiverId);
                     }
 
                     transactions.add(transaction);
@@ -145,16 +134,16 @@ public class DatabaseTransactionDao implements TransactionDao {
     @Override
     public Long executeTransaction(Transaction transaction) throws Exception {
 
-        if (transaction.getFromAccount() == null || transaction.getFromAccount().getId() == null) {
+        if (transaction.getSender() == null) {
             throw new Exception("Unable to execute transaction with sender account unspecified.");
         }
 
-        if (transaction.getToAccount() == null || transaction.getToAccount().getId() == null) {
+        if (transaction.getReceiver() == null) {
             throw new Exception("Unable to execute transaction with receiver account unspecified.");
         }
 
-        Long fromAccountId = transaction.getFromAccount().getId();
-        Long toAccountId = transaction.getToAccount().getId();
+        Long fromAccountId = transaction.getSender();
+        Long toAccountId = transaction.getReceiver();
 
         Connection connection = null;
         PreparedStatement lockAccountsStatement = null;

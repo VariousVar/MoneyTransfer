@@ -34,12 +34,8 @@ public class TransactionController {
             ExecuteTransactionDto transactionDto = rc.getBodyAsJson().mapTo(ExecuteTransactionDto.class);
 
             Transaction transaction = new Transaction();
-            Account sender = new Account();
-            Account receiver = new Account();
-            sender.setId(transactionDto.getSender());
-            receiver.setId(transactionDto.getReceiver());
-            transaction.setFromAccount(sender);
-            transaction.setToAccount(receiver);
+            transaction.setSender(transactionDto.getSender());
+            transaction.setReceiver(transactionDto.getReceiver());
             transaction.setAmount(transactionDto.getAmount());
             transaction.setDescription(transactionDto.getDescription());
 

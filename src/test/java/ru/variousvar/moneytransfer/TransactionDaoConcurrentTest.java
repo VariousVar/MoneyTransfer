@@ -72,8 +72,8 @@ public class TransactionDaoConcurrentTest {
         // act
         accountsToTransfer.forEach(a -> executor.submit(() -> {
             Transaction transaction = new Transaction();
-            transaction.setFromAccount(sender);
-            transaction.setToAccount(a);
+            transaction.setSender(sender.getId());
+            transaction.setReceiver(a.getId());
             transaction.setAmount(transferAmount);
             transaction.setDescription("TransferTo-"+a.getName());
 

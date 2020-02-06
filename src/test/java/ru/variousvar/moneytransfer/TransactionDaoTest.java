@@ -45,8 +45,8 @@ public class TransactionDaoTest {
     public void execute_executedSuccessfully_accountBalanceChanged() throws Exception {
         // arrange
         Transaction transaction = new Transaction();
-        transaction.setFromAccount(first);
-        transaction.setToAccount(second);
+        transaction.setSender(first.getId());
+        transaction.setReceiver(second.getId());
         long transferAmount = first.getBalance() / 2;
         transaction.setAmount(transferAmount);
         transaction.setDescription("Transfer");
@@ -64,8 +64,8 @@ public class TransactionDaoTest {
         assertThat(dbSecondAccount.getBalance(), equalTo(second.getBalance() + transferAmount));
 
         assertThat(dbTransaction.getAmount(), equalTo(transferAmount));
-        assertThat(dbTransaction.getFromAccount().getId(), equalTo(first.getId()));
-        assertThat(dbTransaction.getToAccount().getId(), equalTo(second.getId()));
+        assertThat(dbTransaction.getSender(), equalTo(first.getId()));
+        assertThat(dbTransaction.getReceiver(), equalTo(second.getId()));
 
         assertThat(dbTransaction.getDescription(), equalTo(transaction.getDescription()));
 
@@ -75,8 +75,8 @@ public class TransactionDaoTest {
     public void execute_notEnoughMoney_failToExecuteAndBalanceStaySame() throws Exception {
         // arrange
         Transaction transaction = new Transaction();
-        transaction.setFromAccount(first);
-        transaction.setToAccount(second);
+        transaction.setSender(first.getId());
+        transaction.setReceiver(second.getId());
         long transferAmount = first.getBalance() * 10;
         transaction.setAmount(transferAmount);
         transaction.setDescription("Transfer");
@@ -102,8 +102,8 @@ public class TransactionDaoTest {
         notExist.setBalance(100_000);
 
         Transaction transaction = new Transaction();
-        transaction.setFromAccount(notExist);
-        transaction.setToAccount(second);
+        transaction.setSender(notExist.getId());
+        transaction.setReceiver(second.getId());
         long transferAmount = 50;
         transaction.setAmount(transferAmount);
         transaction.setDescription("Transfer");
@@ -124,8 +124,8 @@ public class TransactionDaoTest {
     public void get_executedSuccessfully_exist() throws Exception {
         // arrange
         Transaction transaction = new Transaction();
-        transaction.setFromAccount(first);
-        transaction.setToAccount(second);
+        transaction.setSender(first.getId());
+        transaction.setReceiver(second.getId());
         long transferAmount = 50;
         transaction.setAmount(transferAmount);
         transaction.setDescription("Transfer");
@@ -138,8 +138,8 @@ public class TransactionDaoTest {
         Transaction dbTransaction = transactionDao.get(transactionId);
 
         assertThat(dbTransaction.getAmount(), equalTo(transferAmount));
-        assertThat(dbTransaction.getFromAccount().getId(), equalTo(first.getId()));
-        assertThat(dbTransaction.getToAccount().getId(), equalTo(second.getId()));
+        assertThat(dbTransaction.getSender(), equalTo(first.getId()));
+        assertThat(dbTransaction.getReceiver(), equalTo(second.getId()));
     }
 
     @Test

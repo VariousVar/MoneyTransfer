@@ -65,7 +65,7 @@ public class AccountDatabaseDaoTest {
         assertThat(accountTransactions, hasSize(1));
         Transaction accountInitialTransaction = accountTransactions.get(0);
         assertThat(accountInitialTransaction.getAmount(), equalTo(account.getBalance()));
-        assertThat(accountInitialTransaction.getToAccount().getId(), equalTo(accountId));
+        assertThat(accountInitialTransaction.getReceiver(), equalTo(accountId));
     }
 
     @Test
