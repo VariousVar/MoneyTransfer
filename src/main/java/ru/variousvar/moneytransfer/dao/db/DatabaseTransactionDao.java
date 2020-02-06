@@ -60,6 +60,7 @@ public class DatabaseTransactionDao implements TransactionDao {
                     transaction.setId(rs.getLong("id"));
                     transaction.setAmount(rs.getLong("amount"));
                     transaction.setDescription(rs.getString("description"));
+                    transaction.setCreated(rs.getTimestamp("created"));
 
                     long senderId = rs.getLong("fromAccount");
                     if (!rs.wasNull()) {
@@ -104,6 +105,7 @@ public class DatabaseTransactionDao implements TransactionDao {
                     transaction.setId(rs.getLong("id"));
                     transaction.setAmount(rs.getLong("amount"));
                     transaction.setDescription(rs.getString("description"));
+                    transaction.setCreated(rs.getTimestamp("created"));
 
                     long senderId = rs.getLong("fromAccount");
                     if (!rs.wasNull()) {
