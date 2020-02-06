@@ -46,7 +46,7 @@ public class TransactionController {
             Long transactionId = transactionDao.executeTransaction(transaction);
             transaction.setId(transactionId);
 
-            // todo bad situation - transaction created, but in case of exception user will think it wasn't
+            // todo bad situation - transaction created, but in case of exception here user will think it wasn't
             rc.response().end(Json.encodePrettily(transaction));
         } catch (Exception e) {
             rc.response().setStatusCode(400);

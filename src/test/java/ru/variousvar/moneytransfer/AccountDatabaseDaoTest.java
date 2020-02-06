@@ -65,7 +65,7 @@ public class AccountDatabaseDaoTest {
         assertThat(accountTransactions, hasSize(1));
         Transaction accountInitialTransaction = accountTransactions.get(0);
         assertThat(accountInitialTransaction.getAmount(), equalTo(account.getBalance()));
-        assertThat(accountInitialTransaction.getToAccount().getId(), equalTo(accountId)); // todo [COUPLING]
+        assertThat(accountInitialTransaction.getToAccount().getId(), equalTo(accountId));
     }
 
     @Test
@@ -76,7 +76,6 @@ public class AccountDatabaseDaoTest {
         account.setBalance(-100);
 
         // act & assert
-        // todo too simple, need some way to validate message or specific type of exception
         Assertions.assertThrows(Exception.class, () -> accountDao.create(account));
     }
 
@@ -147,7 +146,6 @@ public class AccountDatabaseDaoTest {
         // arrange
 
         // act & assert
-        // todo too simple, need some way to validate message or specific type of exception
         Assertions.assertThrows(Exception.class, () -> accountDao.delete(1L));
     }
 

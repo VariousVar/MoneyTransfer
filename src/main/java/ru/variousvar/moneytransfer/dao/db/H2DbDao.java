@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
-// todo refactor to interface + impl
 public class H2DbDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(H2DbDao.class);
 

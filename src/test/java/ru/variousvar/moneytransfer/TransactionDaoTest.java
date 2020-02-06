@@ -83,7 +83,6 @@ public class TransactionDaoTest {
 
 
         // act & assert I
-        // todo use specific exception
         Assertions.assertThrows(Exception.class, () -> transactionDao.executeTransaction(transaction));
 
         // assert II
@@ -111,7 +110,6 @@ public class TransactionDaoTest {
 
 
         // act & assert I
-        // todo use specific exception
         Assertions.assertThrows(Exception.class, () -> transactionDao.executeTransaction(transaction));
 
         // assert II
