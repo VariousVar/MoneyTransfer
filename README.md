@@ -64,3 +64,4 @@ TODO:
 3. Behaviour on deleting accounts should be specified, on my opinion - restricted, due to transaction chain issues.
 4. There probably should exist service account for account initial balance transaction.
 5. Use SWAGGER for API presenting.
+6. REST API.
