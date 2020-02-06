@@ -5,11 +5,11 @@ Simple application for money transferring between accounts. Server works on port
 | METHOD | PATH                      |           BODY          | Response                | Description                                     |
 |--------|---------------------------|:-----------------------:|-------------------------|-------------------------------------------------|
 | GET    | /account/                 |            x            | AccountModel            | Get all registered accounts                     |
-| GET    | /account/{id}             |            x            | Array<AccountModel>     | Get one account by id                           |
+| GET    | /account/{id}             |            x            | Array of AccountModel     | Get one account by id                           |
 | POST   | /account/                 |    CreateAccountModel   | AccountModel            | Create new account                              |
 | PATCH  | /account/{id}             |    ChangeAccountModel   | AccountModel            | Change account                                  |
 | DELETE | /account/{id}             |            x            |                         | Delete account                                  |
-| GET    | /account/{id}/transaction |            x            | Array<TransactionModel> | Get all transactions that correspond to account |
+| GET    | /account/{id}/transaction |            x            | Array of TransactionModel | Get all transactions that correspond to account |
 | POST   | /transaction              | ExecuteTransactionModel | TransactionModel        | Execute transaction between accounts            |
 
 ##### AccountModel
