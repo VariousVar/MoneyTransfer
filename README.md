@@ -1,4 +1,9 @@
-Simple application for money transferring between accounts. Server works on port 8080.
+Simple application for money transferring between accounts. Server works on port 8080. For the test purpose logs go to console.
+
+### Build
+```
+mvn package
+```
 
 ### API:
 
