@@ -144,6 +144,11 @@ public class DatabaseTransactionDao implements TransactionDao {
             throw new Exception("Unable to execute transaction with receiver account unspecified.");
         }
 
+        if (transaction.getSender().equals(transaction.getReceiver())) {
+            // we might allow such operation, and don't change balance, but let's forbid it
+            throw new Exception("Cannot execute transaction between same accounts.");
+        }
+
         Long senderId = transaction.getSender();
         Long receiverId = transaction.getReceiver();
 

@@ -72,6 +72,24 @@ public class TransactionDaoTest {
     }
 
     @Test
+    public void execute_transactionWithinSameAccount_failToExecuteAndBalanceStaySame() throws Exception {
+        // arrange
+        Transaction transaction = new Transaction();
+        transaction.setSender(first.getId());
+        transaction.setReceiver(first.getId());
+        long transferAmount = first.getBalance() / 2;
+        transaction.setAmount(transferAmount);
+        transaction.setDescription("Transfer");
+
+        // act
+        Assertions.assertThrows(Exception.class, () -> transactionDao.executeTransaction(transaction));
+
+        // assert
+        Account dbFirstAccount = accountDao.get(first.getId());
+        assertThat(dbFirstAccount.getBalance(), equalTo(first.getBalance()));
+    }
+
+    @Test
     public void execute_notEnoughMoney_failToExecuteAndBalanceStaySame() throws Exception {
         // arrange
         Transaction transaction = new Transaction();
