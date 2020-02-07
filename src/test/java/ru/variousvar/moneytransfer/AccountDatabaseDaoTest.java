@@ -149,4 +149,46 @@ public class AccountDatabaseDaoTest {
         Assertions.assertThrows(Exception.class, () -> accountDao.delete(1L));
     }
 
+    @Test
+    public void getByAccount_multipleTransactionRegistered_onlyAccountTransactions() throws Exception {
+        // arrange
+        Account accountOne = new Account();
+        accountOne.setName("Test1");
+        accountOne.setBalance(100);
+
+        Account accountTwo = new Account();
+        accountTwo.setName("Test2");
+        accountTwo.setBalance(200);
+
+        Account accountThree = new Account();
+        accountTwo.setName("Test3");
+        accountTwo.setBalance(200);
+
+        Long accountOneId = accountDao.create(accountOne);
+        Long accountTwoId = accountDao.create(accountTwo);
+        Long accountThreeId = accountDao.create(accountThree);
+
+        Transaction transaction = new Transaction();
+        transaction.setSender(accountTwoId);
+        transaction.setReceiver(accountOneId); // send to account one to ease test check
+        transaction.setAmount((long) (accountOne.getBalance() * 0.1));
+
+        transactionDao.executeTransaction(transaction);
+
+        // act
+        List<Transaction> allByAccountOne = transactionDao.getAllByAccount(accountOneId);
+
+        // assert
+        // check accountThree transactions not present in list, cause no transactions between accountOne and accountThree
+        assertThat(allByAccountOne,
+                everyItem(allOf(
+                        not(hasProperty("sender", is(accountThreeId))),
+                        not(hasProperty("receiver", is(accountThreeId))))
+
+                ));
+        // check receiver field, cause only initial and one more transactions exist, both have accountOne in receiver
+        assertThat(allByAccountOne, everyItem(hasProperty("receiver", is(accountOneId))));
+
+    }
+
 }

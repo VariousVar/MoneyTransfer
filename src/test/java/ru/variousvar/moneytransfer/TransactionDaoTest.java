@@ -141,9 +141,4 @@ public class TransactionDaoTest {
         assertThat(dbTransaction.getSender(), equalTo(first.getId()));
         assertThat(dbTransaction.getReceiver(), equalTo(second.getId()));
     }
-
-    @Test
-    public void getByAccount_multipleTransactionRegistered_onlyAccountTransactions() throws Exception {
-        // todo need impl
-    }
 }
