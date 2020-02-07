@@ -21,7 +21,7 @@ public class DatabaseAccountDao implements AccountDao {
 
     private final String initialBalanceTransactionQuery =
             "INSERT INTO transaction " +
-            "(fromAccount, toAccount, amount, description, created) " +
+            "(sender, receiver, amount, description, created) " +
             "VALUES (?, ?, ?, ?, ?)";
 
     private final ConnectionFactory connectionFactory;

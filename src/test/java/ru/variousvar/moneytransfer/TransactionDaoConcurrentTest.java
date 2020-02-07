@@ -50,13 +50,13 @@ public class TransactionDaoConcurrentTest {
         sender.setId(senderAccountId);
 
         long transferAmount = (long) (sender.getBalance() * 0.9);
-        long transferToAccountsBalance = 500;
+        long receiversAccountsBalance = 500;
 
         List<Account> accountsToTransfer = new ArrayList<>();
         for (int i = 0; i < concurrentTransactions; i++) {
             Account account = new Account();
             account.setName("Account-"+i);
-            account.setBalance(transferToAccountsBalance);
+            account.setBalance(receiversAccountsBalance);
 
             Long accountId = accountDao.create(account);
             account.setId(accountId);
@@ -106,9 +106,9 @@ public class TransactionDaoConcurrentTest {
         // ensure only one account received money, others stayed unchanged
         int accountBalanceIncreasedCount = 0, accountBalanceStaysSameCount = 0;
         for (Account dbAccount : dbAccounts) {
-            if (dbAccount.getBalance() == transferToAccountsBalance) {
+            if (dbAccount.getBalance() == receiversAccountsBalance) {
                 accountBalanceStaysSameCount++;
-            } else if (dbAccount.getBalance() == transferToAccountsBalance + transferAmount) {
+            } else if (dbAccount.getBalance() == receiversAccountsBalance + transferAmount) {
                 accountBalanceIncreasedCount++;
             } else {
                 throw new Exception("Account balance changed unpredictably. Transfer logic probably really broken.");

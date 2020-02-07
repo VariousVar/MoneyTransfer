@@ -20,19 +20,19 @@ public class DatabaseTransactionDao implements TransactionDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseTransactionDao.class);
 
     private final String selectSingleTransactionWithAccountsQuery = "" +
-            "SELECT t.id, t.fromAccount, t.toAccount, t.amount, t.created, t.description " +
+            "SELECT t.id, t.sender, t.receiver, t.amount, t.created, t.description " +
             "FROM `transaction` t " +
-            "LEFT JOIN account aFrom ON aFrom.id = t.fromAccount " +
-            "LEFT JOIN account aTo ON aTo.id = t.toAccount " +
+            "LEFT JOIN account aFrom ON aFrom.id = t.sender " +
+            "LEFT JOIN account aTo ON aTo.id = t.receiver " +
             "WHERE t.id = ?";
 
-    // fixme left join... may create empty fromAccount, but fromAccount maybe null if we don't have service account to initiate balance
+    // fixme left join... may create empty sender, but sender maybe null if we don't have service account to initiate balance
     private final String selectTransactionsWithAccountsQuery = "" +
-            "SELECT t.id, t.fromAccount, t.toAccount, t.amount, t.created, t.description " +
+            "SELECT t.id, t.sender, t.receiver, t.amount, t.created, t.description " +
             "FROM `transaction` t " +
-            "LEFT JOIN account aFrom ON aFrom.id = t.fromAccount " +
-            "LEFT JOIN account aTo ON aTo.id = t.toAccount " +
-            "WHERE (t.fromAccount = ? OR t.toAccount = ?) " +
+            "LEFT JOIN account aFrom ON aFrom.id = t.sender " +
+            "LEFT JOIN account aTo ON aTo.id = t.receiver " +
+            "WHERE (t.sender = ? OR t.receiver = ?) " +
             "ORDER BY t.created DESC";
 
     private final ConnectionFactory connectionFactory;
@@ -62,12 +62,12 @@ public class DatabaseTransactionDao implements TransactionDao {
                     transaction.setDescription(rs.getString("description"));
                     transaction.setCreated(rs.getTimestamp("created"));
 
-                    long senderId = rs.getLong("fromAccount");
+                    long senderId = rs.getLong("sender");
                     if (!rs.wasNull()) {
                         transaction.setSender(senderId);
                     }
 
-                    long receiverId = rs.getLong("toAccount");
+                    long receiverId = rs.getLong("receiver");
                     if (!rs.wasNull()) {
                         transaction.setReceiver(receiverId);
                     }
@@ -107,12 +107,12 @@ public class DatabaseTransactionDao implements TransactionDao {
                     transaction.setDescription(rs.getString("description"));
                     transaction.setCreated(rs.getTimestamp("created"));
 
-                    long senderId = rs.getLong("fromAccount");
+                    long senderId = rs.getLong("sender");
                     if (!rs.wasNull()) {
                         transaction.setSender(senderId);
                     }
 
-                    long receiverId = rs.getLong("toAccount");
+                    long receiverId = rs.getLong("receiver");
                     if (!rs.wasNull()) {
                         transaction.setReceiver(receiverId);
                     }
@@ -144,8 +144,8 @@ public class DatabaseTransactionDao implements TransactionDao {
             throw new Exception("Unable to execute transaction with receiver account unspecified.");
         }
 
-        Long fromAccountId = transaction.getSender();
-        Long toAccountId = transaction.getReceiver();
+        Long senderId = transaction.getSender();
+        Long receiverId = transaction.getReceiver();
 
         Connection connection = null;
         PreparedStatement lockAccountsStatement = null;
@@ -158,35 +158,35 @@ public class DatabaseTransactionDao implements TransactionDao {
 
             // lock accounts for update - ensure only this connection can change balance
             lockAccountsStatement = connection.prepareStatement("SELECT id, balance FROM account WHERE id IN (?, ?) FOR UPDATE");
-            lockAccountsStatement.setLong(1, toAccountId);
-            lockAccountsStatement.setLong(2, fromAccountId);
+            lockAccountsStatement.setLong(1, receiverId);
+            lockAccountsStatement.setLong(2, senderId);
 
-            Long toAccountBalance = null, fromAccountBalance = null;
+            Long receiverBalance = null, senderBalance = null;
             try (ResultSet rs = lockAccountsStatement.executeQuery()) {
                 while (rs.next()) {
                     long accountId = rs.getLong("id");
                     long accountBalance = rs.getLong("balance");
 
-                    if (accountId == toAccountId) {
-                        toAccountBalance = accountBalance;
+                    if (accountId == receiverId) {
+                        receiverBalance = accountBalance;
                     }
 
-                    if (accountId == fromAccountId) {
-                        fromAccountBalance = accountBalance;
+                    if (accountId == senderId) {
+                        senderBalance = accountBalance;
                     }
                 }
             }
 
             // todo it's better to add info in log about amounts and ids, but I guess it's restricted
-            if (toAccountBalance == null) {
+            if (receiverBalance == null) {
                 throw new Exception("Receiver account doesn't exist");
             }
-            if (fromAccountBalance == null) {
+            if (senderBalance == null) {
                 throw new Exception("Sender account doesn't exist");
             }
 
-            if (fromAccountBalance - transaction.getAmount() < 0) {
-                throw new Exception("Sender account doesnt' have enough money for transfer");
+            if (senderBalance - transaction.getAmount() < 0) {
+                throw new Exception("Sender account doesn't have enough money for transfer");
             }
 
             // update balances
@@ -194,18 +194,18 @@ public class DatabaseTransactionDao implements TransactionDao {
                     "UPDATE account SET balance = ? WHERE id = ?; " +
                     "UPDATE account SET balance = ? WHERE id = ?;");
 
-            updateAccountsStatement.setLong(1, fromAccountBalance - transaction.getAmount());
-            updateAccountsStatement.setLong(2, fromAccountId);
-            updateAccountsStatement.setLong(3, toAccountBalance + transaction.getAmount());
-            updateAccountsStatement.setLong(4, toAccountId);
+            updateAccountsStatement.setLong(1, senderBalance - transaction.getAmount());
+            updateAccountsStatement.setLong(2, senderId);
+            updateAccountsStatement.setLong(3, receiverBalance + transaction.getAmount());
+            updateAccountsStatement.setLong(4, receiverId);
             updateAccountsStatement.executeUpdate();
 
             // register transaction
             registerTransactionStatement = connection.prepareStatement("" +
-                    "INSERT INTO transaction (fromAccount, toAccount, amount, description, created) " +
+                    "INSERT INTO transaction (sender, receiver, amount, description, created) " +
                     "VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            registerTransactionStatement.setLong(1, fromAccountId);
-            registerTransactionStatement.setLong(2, toAccountId);
+            registerTransactionStatement.setLong(1, senderId);
+            registerTransactionStatement.setLong(2, receiverId);
             registerTransactionStatement.setLong(3, transaction.getAmount());
             registerTransactionStatement.setString(4, transaction.getDescription());
             registerTransactionStatement.setTimestamp(5, Timestamp.from(Instant.now()));
